@@ -1,9 +1,0 @@
-{
-	"servers": {
-		"feishu-mcp": {
-			"type": "http",
-			"url": "https://mcp.feishu.cn/mcp/mcp_LQ9XpM4n47cByhXCxusvTiOrHRyZRQSugEd5g2C_xyLogqLUwDaHSHz5pAvshrqG4cSGMgWAz9k"
-		}
-	},
-	"inputs": []
-}

@@ -1,4 +1,5 @@
 .trae/*
+.codebuddy/
 *.pyc
 __pycache__/
 *.pyo
@@ -7,4 +8,8 @@ __pycache__/
 cache/
 build/
 install/
+.venv/
+venv/
+node_modules/
+program/cache/
 
