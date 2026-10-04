@@ -2,8 +2,9 @@
 # 开发依赖
 pyyaml
 smbus2
-i2cdev
-adafruit-extended-bus 
+# i2cdev 依赖 Unix 的 fcntl 模块，Windows 下无法构建，仅在 Linux（树莓派）安装
+i2cdev; sys_platform == "linux"
+adafruit-extended-bus
 adafruit-circuitpython-pca9685 
 adafruit-circuitpython-motor
 Adafruit-Blinka 
