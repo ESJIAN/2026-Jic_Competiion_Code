@@ -12,12 +12,13 @@ from pydantic import BaseModel
 
 # Add project root to sys.path
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT))
 
-from program.src.support.driver.chassis_driver import ChassisDriver
-from program.src.support.driver.imu_driver import IMUDriver
-from program.src.support.driver.lidar_driver import LidarDriver
-from program.src.support.driver.camera_driver import CameraDriver
-from program.src.support.logger import get_logger
+from src.support.driver.chassis_driver import ChassisDriver
+from src.support.driver.imu_driver import IMUDriver
+from src.support.driver.lidar_driver import LidarDriver
+from src.support.driver.camera_driver import CameraDriver
+from src.support.logger import get_logger
 
 logger = get_logger("web_api")
 

@@ -11,7 +11,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 import rclpy
 from geometry_msgs.msg import Twist
-from src.execution.chassis_control.chassis_node import ChassisNode
+from src.execution.chassis_control.chassis_control.chassis_node import ChassisNode
 
 class TestChassisNode(unittest.TestCase):
     @classmethod
@@ -24,7 +24,9 @@ class TestChassisNode(unittest.TestCase):
 
     def setUp(self):
         # Patch the ChassisDriver class
-        self.patcher = patch('src.execution.chassis_control.chassis_node.ChassisDriver')
+        self.patcher = patch(
+            'src.execution.chassis_control.chassis_control.chassis_node.ChassisDriver'
+        )
         self.MockDriver = self.patcher.start()
         
         # Setup mock driver instance

@@ -11,30 +11,28 @@ This script performs a comprehensive test of the chassis motion capabilities:
      - Counter-Clockwise (Left Backward, Right Forward)
 
 Usage:
-    python3 tests/chassis/chassis_rotate.py
+    python3 tests/support/driver/chassis/chassis_rotate.py
 """
 
 import sys
 import time
-import importlib
 import yaml
 from pathlib import Path
 
-from program.src.support.logger import get_logger
-from program.src.support.driver.chassis_driver import ChassisDriver
+# Add project root to sys.path (must happen before importing project modules)
+PROJECT_ROOT = Path(__file__).resolve().parents[4]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
-# Add project root to sys.path
-PROJECT_ROOT = Path(__file__).parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
-# Add current directory to sys.path to allow importing sibling scripts
-sys.path.insert(0, str(Path(__file__).parent))
+from src.support.logger import get_logger
+from src.support.driver.chassis_driver import ChassisDriver
 
 logger = get_logger(__name__)
 
 # Load configuration
 CONFIG_PATH = PROJECT_ROOT / 'config/chasis_params.yaml'
 
-def load_config():
+def load_chassis_config():
     if CONFIG_PATH.exists():
         with open(CONFIG_PATH, 'r') as f:
             return yaml.safe_load(f)
@@ -42,8 +40,8 @@ def load_config():
 
 # Import sibling motor test scripts
 try:
-    import program.tests.support.driver.chassis.left_motor as left_motor
-    import program.tests.support.driver.chassis.right_motor as right_motor
+    import tests.support.driver.chassis.left_motor as left_motor
+    import tests.support.driver.chassis.right_motor as right_motor
 except ImportError as e:
     print(f"Error importing motor scripts: {e}")
     sys.exit(1)
@@ -92,7 +90,7 @@ def test_chassis_rotation():
         config = load_chassis_config()
         driver = ChassisDriver()
         # Update motor mapping: M2=Left, M3=Right (based on left_motor.py and right_motor.py)
-        driver.set_motor_mapping(left_id=2, right_id=3)
+        driver.reconfig_motor_mapping(left_id=2, right_id=3)
 
         # Apply speed correction if available
         speed_corr = config.get('speed_correction', {})

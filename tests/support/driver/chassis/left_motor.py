@@ -22,9 +22,10 @@ import yaml
 from smbus2 import SMBus
 
 # Add project root to sys.path
-sys.path.insert(0, str(Path(__file__).parents[2]))
+PROJECT_ROOT = Path(__file__).resolve().parents[4]
+sys.path.insert(0, str(PROJECT_ROOT))
 
-from program.src.support.logger import get_logger
+from src.support.logger import get_logger
 
 logger = get_logger(__name__)
 
@@ -36,7 +37,7 @@ def load_config():
     Returns:
         dict: Configuration dictionary.
     """
-    config_path = Path(__file__).parents[2] / 'config/chasis_params.yaml'
+    config_path = PROJECT_ROOT / 'config/chasis_params.yaml'
     if config_path.exists():
         with open(config_path, 'r') as f:
             return yaml.safe_load(f)

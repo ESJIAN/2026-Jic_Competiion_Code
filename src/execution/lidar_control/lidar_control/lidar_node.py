@@ -26,7 +26,7 @@ except ImportError:
         pass
 
 # 使用标准的包导入方式
-from program.src.support.driver.lidar_driver import LDS50CDriver
+from src.support.driver.lidar_driver import LDS50CDriver
 
 # Project Root for config loading
 PROJECT_ROOT = Path(__file__).parents[4]

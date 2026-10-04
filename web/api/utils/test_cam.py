@@ -5,7 +5,7 @@ import os
 import time
 from pathlib import Path
 
-from program.src.support.logger import logger
+from src.support.logger import logger
 
 try:
     # Use localhost since we are on the same machine

@@ -20,9 +20,9 @@ def test_imu():
 
 if __name__ == "__main__":
     
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
-    from program.src.support.driver.imu_driver import IMUDriver
-    from program.src.support.logger import get_logger
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../..')))
+    from src.support.driver.imu_driver import IMUDriver
+    from src.support.logger import get_logger
 
     logger = get_logger(__name__)
 

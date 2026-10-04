@@ -6,7 +6,7 @@ import time
 PROJECT_ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from program.src.support.driver.lidar_driver import LDS50CDriver
+from src.support.driver.lidar_driver import LDS50CDriver
 
 def test_lds50c():
     port = "/dev/ttyS1"

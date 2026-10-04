@@ -12,4 +12,5 @@ install/
 venv/
 node_modules/
 program/cache/
+dist/
 

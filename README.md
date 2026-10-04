@@ -110,30 +110,30 @@
 
 | 模块         | 路径                                                       | 说明                                                      |
 | ------------ | ---------------------------------------------------------- | --------------------------------------------------------- |
-| 底盘驱动     | `program/src/support/driver/chassis_driver.py`             | 差速运动学、I2C 通信、编码器反馈、速度修正                |
-| IMU 驱动     | `program/src/support/driver/imu_driver.py`                 | BNO055 四元数 + 角速度 + 加速度                           |
-| 摄像头驱动   | `program/src/support/driver/camera_driver.py`              | USB 摄像头 JPEG 流                                        |
-| 激光雷达串口 | `program/tests/support/driver/lidar/lidar_connect.py`      | RPLIDAR S1 串口连接测试通过                               |
-| 配置加载     | `program/src/support/config_loader.py`                     | YAML 配置加载                                             |
-| 日志系统     | `program/src/support/logger/log.py`                        | RotatingFileHandler + 控制台双输出                        |
-| Web 调试面板 | `program/web/api/main.py` + `program/web/public/`          | FastAPI 后端 + SPA 前端（底盘控制 / IMU / 雷达 / 摄像头） |
-| 底盘测试脚本 | `program/tests/support/driver/chassis/`                    | 单电机、旋转、平移测试                                    |
-| 分层架构     | `program/src/{support,execution,functional,decision,application}/` | 五层目录结构 + 接口文件                            |
+| 底盘驱动     | `src/support/driver/chassis_driver.py`             | 差速运动学、I2C 通信、编码器反馈、速度修正                |
+| IMU 驱动     | `src/support/driver/imu_driver.py`                 | BNO055 四元数 + 角速度 + 加速度                           |
+| 摄像头驱动   | `src/support/driver/camera_driver.py`              | USB 摄像头 JPEG 流                                        |
+| 激光雷达串口 | `tests/support/driver/lidar/lidar_connect.py`      | RPLIDAR S1 串口连接测试通过                               |
+| 配置加载     | `src/support/config_loader.py`                     | YAML 配置加载                                             |
+| 日志系统     | `src/support/logger/log.py`                        | RotatingFileHandler + 控制台双输出                        |
+| Web 调试面板 | `web/api/main.py` + `web/public/`          | FastAPI 后端 + SPA 前端（底盘控制 / IMU / 雷达 / 摄像头） |
+| 底盘测试脚本 | `tests/support/driver/chassis/`                    | 单电机、旋转、平移测试                                    |
+| 分层架构     | `src/{support,execution,functional,decision,application}/` | 五层目录结构 + 接口文件                            |
 
 ### 待实现模块
 
 | 模块               | 路径                                                  | 对应里程碑 |
 | ------------------ | ----------------------------------------------------- | ---------- |
-| URDF 建模          | `program/src/support/simulation/`                     | M0         |
-| 激光雷达 ROS2 驱动 | `program/src/functional/slam_module/`                 | M0         |
-| SLAM 建图          | `program/src/functional/slam_module/`                 | M1         |
-| 路径规划           | `program/src/decision/path_planning/`                 | M1         |
-| 机械臂控制         | `program/src/execution/arm_control/`                  | M2         |
-| 视觉感知           | `program/src/functional/visual_perception/`           | M3         |
-| 行为树             | `program/src/decision/behavior_tree/`                 | M4         |
-| 任务调度           | `program/src/application/task_planner/`               | M4         |
-| BCI 接入           | `program/src/application/bci_mr_interaction/scripts/bci_interface.py` | M5 |
-| MR 反馈层          | `program/src/application/bci_mr_interaction/scripts/mr_interface.py`  | M6 |
+| URDF 建模          | `src/support/simulation/`                     | M0         |
+| 激光雷达 ROS2 驱动 | `src/functional/slam_module/`                 | M0         |
+| SLAM 建图          | `src/functional/slam_module/`                 | M1         |
+| 路径规划           | `src/decision/path_planning/`                 | M1         |
+| 机械臂控制         | `src/execution/arm_control/`                  | M2         |
+| 视觉感知           | `src/functional/visual_perception/`           | M3         |
+| 行为树             | `src/decision/behavior_tree/`                 | M4         |
+| 任务调度           | `src/application/task_planner/`               | M4         |
+| BCI 接入           | `src/application/bci_mr_interaction/scripts/bci_interface.py` | M5 |
+| MR 反馈层          | `src/application/bci_mr_interaction/scripts/mr_interface.py`  | M6 |
 
 ------
 
@@ -197,26 +197,26 @@ cd jic_competiion
 ### 安装 Python 依赖
 
 ```bash
-pip3 install -r program/requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ### 硬件验证（已完成模块）
 
 ```bash
 # 底盘单电机测试
-python3 program/tests/support/driver/chassis/left_motor.py
+python3 tests/support/driver/chassis/left_motor.py
 
 # 底盘旋转测试
-python3 program/tests/support/driver/chassis/chassis_rotate.py
+python3 tests/support/driver/chassis/chassis_rotate.py
 
 # 底盘平移测试
-python3 program/tests/support/driver/chassis/chassis_translate.py
+python3 tests/support/driver/chassis/chassis_translate.py
 
 # 激光雷达串口连接测试
-python3 program/tests/support/driver/lidar/lidar_connect.py
+python3 tests/support/driver/lidar/lidar_connect.py
 
 # 启动 Web 调试面板（底盘控制 / IMU / 雷达 / 摄像头）
-cd program/web && uvicorn api.main:app --host 0.0.0.0 --port 8000
+cd web && uvicorn api.main:app --host 0.0.0.0 --port 8000
 ```
 
 > ROS2 节点封装、SLAM 建图、Nav2 导航等功能尚在开发中，对应的 `ros2 launch` 命令将在各里程碑完成后补充。
@@ -227,7 +227,7 @@ cd program/web && uvicorn api.main:app --host 0.0.0.0 --port 8000
 
 ```
 jic_competiion/
-└── program/
+└── 
         ├── src/
         │   ├── support/           # 支撑层：驱动、配置、日志、仿真
         │   │   ├── driver/        #   chassis_driver / imu_driver / camera_driver

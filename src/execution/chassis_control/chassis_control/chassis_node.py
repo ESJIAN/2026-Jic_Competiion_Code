@@ -8,7 +8,7 @@ from nav_msgs.msg import Odometry
 from tf2_ros import TransformBroadcaster
 
 # 使用标准的包导入方式
-from support.driver.chassis_driver import ChassisDriver
+from src.support.driver.chassis_driver import ChassisDriver
 
 class ChassisNode(Node):
     def __init__(self):

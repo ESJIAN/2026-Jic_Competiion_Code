@@ -10,7 +10,7 @@ relative to the project root.
 import yaml
 from pathlib import Path
 
-from program.src.support.logger import get_logger
+from src.support.logger import get_logger
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 logger = get_logger(__name__)
 

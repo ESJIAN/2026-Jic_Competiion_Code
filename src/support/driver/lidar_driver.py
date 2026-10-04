@@ -9,7 +9,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parents[3]
 sys.path.insert(0, str(PROJECT_ROOT))
-from program.src.support.logger import get_logger
+from src.support.logger import get_logger
 
 class LidarDriver:
     """Mock Lidar Driver for testing."""

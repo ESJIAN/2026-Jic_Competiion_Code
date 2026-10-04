@@ -3,11 +3,11 @@ import sys
 import os
 from pathlib import Path
 
-from program.src.support.driver.camera_driver import CameraDriver
+from src.support.driver.camera_driver import CameraDriver
 import cv2
 
 def test_camera():
-    from program.src.support.logger import logger
+    from src.support.logger import logger
     logger.debug("Initializing CameraDriver...")
     cam = CameraDriver()
     
