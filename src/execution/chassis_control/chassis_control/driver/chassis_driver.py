@@ -34,7 +34,7 @@ import time
 import struct
 import math
 from smbus2 import SMBus
-from support.config_loader import load_chassis_config
+from src.support.config_loader import load_chassis_config
 
 # 配置日志记录
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
