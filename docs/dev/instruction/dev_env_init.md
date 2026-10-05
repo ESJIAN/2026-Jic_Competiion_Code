@@ -153,6 +153,7 @@ ln -sf ~/.local/node/v24.13.0/bin/corepack ~/bin/corepack
 | `scripts/ros2_communicate_env_init.bash` | ROS 2 通信环境（`PYTHONPATH`） | 编译/运行报找不到包时 |
 | `scripts/ros2run_cli_env_init.bash` | 把 `scripts/` 加入 PATH，便于直接 `ros2 run` | 本地调试 ROS 2 节点 |
 | `scripts/node_env_init.bash` | Node.js 工具链（见 §2） | 需要 npm/npx 时 |
+| `scripts/cnb_credential_init.bash` | CNB Git 推送凭证（见 §6） | `git push` 报鉴权失败 |
 | `scripts/setup_rdk.sh` | RDK X5 板级环境 | RDK 板上 |
 | `bash init.bash` | OrbbecSDK / LDS50C SDK 拉取与依赖安装 | 首次拉取 SDK |
 | `bash scripts/show_env.bash` | 环境体检（只读） | 排查任何环境问题前 |
