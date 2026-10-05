@@ -200,6 +200,18 @@ cd jic_competiion
 pip3 install -r requirements.txt
 ```
 
+### 安装 Node.js 工具链（node / npm / npx）
+
+前端构建与 npm 生态工具需要 Node.js **v24.13.0**：
+
+```bash
+bash scripts/node_env_init.bash --check   # 诊断
+bash scripts/node_env_init.bash           # 安装 / 修复（幂等）
+```
+
+> 环境基线、全部初始化脚本与历史环境故障见
+> [`docs/dev/instruction/dev_env_init.md`](docs/dev/instruction/dev_env_init.md)。
+
 ### 硬件验证（已完成模块）
 
 ```bash
