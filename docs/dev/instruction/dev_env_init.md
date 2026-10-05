@@ -211,7 +211,109 @@ bash scripts/show_env.bash
 
 ---
 
-## 6. 相关文档
+## 6. CNB 凭证与 Git 推送鉴权
+
+项目托管在 [CNB](https://cnb.cool/esjian/2026-Jic_Competiion_Code)。
+IDE 内置 Git 与命令行 Git **不共享凭证**，推送鉴权失败时错误信息极具误导性。
+
+### 6.1 症状
+
+IDE 推送时日志出现（两种报错交替出现）：
+
+```
+remote: Unauthorized
+fatal: Authentication failed for 'https://cnb.cool/esjian/2026-Jic_Competiion_Code.git/'
+
+remote: Repository Not Found.
+remote: 仓库不存在。
+remote:
+remote: token:
+fatal: repository 'https://cnb.cool/esjian/2026-Jic_Competiion_Code.git/' not found
+```
+
+**误导性极强**：同一时刻 `git pull` 却是成功的（匿名可读，仓库为 Public），
+容易误判为「仓库被删了」或「token 没配」，从而反复去重新申请/粘贴 token。
+
+### 6.2 排查过程
+
+```bash
+# ① 确认 remote 干净、没有内嵌过期凭证
+git remote -v | sed -E 's#(https?://)[^/@]*@#\1<credentials>@#g'
+
+# ② 确认是否已有凭证助手（本案初始为空 → IDE 自行注入，故 CLI 也失败）
+git config --get-all credential.helper || echo "(未设置 helper)"
+ls -la ~/.git-credentials 2>/dev/null || echo "~/.git-credentials 不存在"
+
+# ③ 直接问 CNB 要答案：git 推送端点对不同 Basic 组合的响应
+CT=<token>
+#    空密码 → 404「仓库不存在」；用户名密码都填 token → 200 git-receive-pack
+curl -s -o /dev/null -w '%{http_code}\n' -u "$CT:" \
+  "https://cnb.cool/esjian/2026-Jic_Competiion_Code.git/info/refs?service=git-receive-pack"
+curl -s -o /dev/null -w '%{http_code}\n' -u "$CT:$CT" \
+  "https://cnb.cool/esjian/2026-Jic_Competiion_Code.git/info/refs?service=git-receive-pack"
+```
+
+关键辅助命令：`GIT_TRACE_CURL=1 git push --dry-run` 可确认
+`Authorization: Basic` 头**确实发出**了，从而把问题定位到服务端解析而非本地缺凭证。
+
+### 6.3 根因
+
+两个坑叠加，都与「凭证条目怎么写」有关：
+
+1. **git 2.34 的 `credential-store` 会静默忽略没有 password 段的条目。**
+   写 `https://<token>@cnb.cool`（只有 user）→ helper 匹配不到任何条目 →
+   表现为 `fatal: could not read Username`，且**不给出任何显式报错**。
+   必须写成 `https://<token>:@cnb.cool`（显式空密码）才会被匹配。
+2. **CNB 要求 Basic 认证的用户名与密码都填 token。**
+   即便条目被匹配上，`user=token, password=` 仍会被 CNB 判为
+   「仓库不存在 / Repository Not Found」，`token:` 字段回显为空。
+
+> 附带陷阱：多个 credential helper 同时存在时，**先返回结果的 helper 会短路**。
+> 若全局 `~/.git-credentials` 里残留空密码条目，用 `-c credential.helper=...` 临时覆盖
+> 也无效——必须先清理全局条目，否则会得出「改了没用」的错误结论。
+
+### 6.4 修复方式
+
+已沉淀为幂等脚本 `scripts/cnb_credential_init.bash`：
+
+```bash
+# 诊断（只读）
+bash scripts/cnb_credential_init.bash --check
+
+# 配置（token 从 CNB_TOKEN 环境变量读取，不入库、不进 remote URL）
+CNB_TOKEN=<token> bash scripts/cnb_credential_init.bash
+```
+
+脚本做三件事：设置 `credential.helper=store` → 清理 `@cnb.cool` 旧条目 →
+写入 `https://<token>:<token>@cnb.cool` 并将权限设为 `600`。
+
+> ⚠️ token 明文落盘于 `~/.git-credentials`（权限 600），这是 git 标准做法。
+> **不要**把 token 写进 remote URL 或仓库内任何文件（会随 `.git/config` 或代码泄露）。
+
+### 6.5 验收标准
+
+```bash
+# ① 诊断脚本全绿
+/bin/sh -c 'cd /home/aimer/Desktop/2026-Jic_Competiion_Code && bash scripts/cnb_credential_init.bash --check'
+# 期望：两条 [OK]，无 [!] 警告
+
+# ② 鉴权可达（不产生实际远程变更），退出码必须为 0
+/bin/sh -c 'cd /home/aimer/Desktop/2026-Jic_Competiion_Code && GIT_TERMINAL_PROMPT=0 git push --dry-run origin HEAD:main'
+# 期望：输出形如 'd94c01a..xxxxxxx  HEAD -> main'
+
+# ③ 推送后本地与远端一致
+git status -sb | head -1
+# 期望：## main...origin/main（无 [ahead N]）
+```
+
+### 6.6 IDE 内推送仍失败时
+
+脚本只修好**命令行 git**。若 IDE 推送依旧报错，说明 IDE 持有自己的一份旧凭证
+并优先使用它——git 凭证助手无法覆盖，需在 IDE 设置中更新其内置的 CNB 凭证后重试。
+
+---
+
+## 7. 相关文档
 
 | 文档 | 内容 |
 | --- | --- |
@@ -219,4 +321,5 @@ bash scripts/show_env.bash
 | `docs/dev/problem/compilation_issues.md` | 编译错误与依赖缺失 |
 | `docs/dev/sop/fix-ide-extension-install-slow.md` | IDE 远程插件安装缓慢的排查与修复（网络/DNS/代理） |
 | `docs/dev/instruction/project_structure.md` | 项目目录结构与分层架构 |
+| `scripts/cnb_credential_init.bash` | CNB Git 凭证配置（见 §6） |
 | `CONTRIBUTING.md` | 环境要求与提交前检查清单 |
